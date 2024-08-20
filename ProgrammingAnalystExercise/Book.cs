@@ -8,6 +8,10 @@
 
         public Book(string title)
         {
+            if (string.IsNullOrEmpty(title))
+            {
+                throw new ArgumentNullException("Book title can't be null or empty");
+            }
             Title = title;
             Barcode = Guid.NewGuid().ToString(); // Generates a unique barkode
             IsBorrowed = false;
