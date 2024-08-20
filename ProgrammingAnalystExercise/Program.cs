@@ -18,9 +18,9 @@
             var newBook = new Book("Great Expectations");
             
             library.AddBook(newBook);
-            library.BorrowBook("Great Expectations");
-            library.ReturnBook("Great Expectations");
-            library.RemoveBook("Great Expectations");
+            library.BorrowBook(newBook.Barcode);
+            library.ReturnBook(newBook.Barcode);
+            library.RemoveBook(newBook.Barcode);
         }
     }
 }

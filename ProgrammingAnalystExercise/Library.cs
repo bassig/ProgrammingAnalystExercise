@@ -14,59 +14,59 @@
         public void AddBook(Book book)
         {
             books.Add(book);
-            Console.WriteLine($"The book {book.Title} has been added to the Library");
+            Console.WriteLine($"The book {book.Title}, Barcode: {book.Barcode} has been added to the Library");
         }
 
-        public void BorrowBook(string title)
+        public void BorrowBook(string barcode)
         {
-            var book = FindBook(title);
+            var book = FindBookByBarcode(barcode);
             if (book != null)
             {
                 book.Borrow();
             }
-            else
+        }
+
+        public void ReturnBook(string barcode)
+        {
+            var foundbook = FindBookByBarcode(barcode);
+            if (foundbook != null)
             {
-                Console.WriteLine($"The book '{title}' was not found in the library.");
+                foundbook.Return();
             }
         }
 
-        public void ReturnBook(string title)
+        public void RemoveBook(string barcode)
         {
-            var book = FindBook(title);
-            if (book != null)
-            {
-                book.Return();
-            }
-            else
-            {
-                Console.WriteLine($"The book '{title}' was not found in the library.");
-            }
-        }
-
-        public void RemoveBook(string title)
-        {
-            var book = FindBook(title);
+            var book = FindBookByBarcode(barcode);
             if (book != null)
             {
                 books.Remove(book);
-                Console.WriteLine($"The book '{title}' has been removed from the library.");
-            }
-            else
-            {
-                Console.WriteLine($"The book '{title}' was not found in the library.");
+                Console.WriteLine($"The book '{book.Title}' Barcode: '{book.Barcode}' has been removed from the library.");
             }
         }
 
-        private Book? FindBook(string title)
+        private Book? FindBookByBarcode(string barcode)
         {
-            foreach (var book in books)
+            var foundBook =  books.FirstOrDefault(book => book.Barcode == barcode);
+            if (foundBook != null)
             {
-                if (book.Title == title)
-                {
-                    return book;
-                }
+                return foundBook;
             }
-            return new Book(title);
+            else
+            {
+                Console.WriteLine($"The book with Barcode: '{barcode}' was not found in the library.");
+                return null;
+            }
+        }
+
+        public string? FindAvailableBookBarcodeByTitle(string title)
+        {
+            var foundBook = books.FirstOrDefault( book => book.Title == title && book.IsBorrowed);
+            if (foundBook != null)
+            {
+                return foundBook.Barcode;
+            }
+            return null;
         }
     }
 }
