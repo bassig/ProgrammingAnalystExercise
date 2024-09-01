@@ -3,21 +3,22 @@
     public class Book
     {
         public string Title { get; private set; }
-        public string? BorrowedBy { get; private set; } = null;
+        public Card? BorrowedBy { get; private set; } = null;
         public int Id { get; private set; }
 
-        public Book(string title, int bookId)
+        public Book(int id, string title)
         {
-            if (string.IsNullOrEmpty(title)) throw new ArgumentNullException("The book title can't be null or empty");
+            ArgumentOutOfRangeException.ThrowIfNegative(id);
+            if (string.IsNullOrEmpty(title)) throw new ArgumentNullException(nameof(title), "The book title can't be null or empty");
             Title = title;
-            Id = bookId;
+            Id = id;
         }
 
-        public void Borrow(string borrower) // TODO library card system
+        public void Borrow(Card borrowerCard) 
         {
             if (BorrowedBy == null)
             {
-                BorrowedBy = borrower;
+                BorrowedBy = borrowerCard;
                 Console.WriteLine($"The book '{Title}' of ID '{Id}' has been checked out by {BorrowedBy}.");
             }
             else
