@@ -8,7 +8,7 @@
         public Card(int id, string holder)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(id);
-            if (string.IsNullOrEmpty(holder)) throw new ArgumentNullException(nameof(holder), "The name of a card holder can't be null or empty");
+            if (string.IsNullOrWhiteSpace(holder)) throw new ArgumentNullException(nameof(holder), "The name of a card holder can't be null or empty");
             Id = id;
             Holder = holder;
         }

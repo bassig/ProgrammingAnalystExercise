@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace ProgrammingAnalystExercise
+﻿namespace ProgrammingAnalystExercise
 {
     public class Library
     {
@@ -23,7 +21,8 @@ namespace ProgrammingAnalystExercise
             return book;
         }
 
-        public void BorrowBook(string title, Card borrower)
+        /// <returns>First the book that was borrowed (null if it failed), and second a status representing the result of an attempt to borrow a specific title</returns>
+        public (Book?, BorrowBookResult) BorrowBook(string title, Card borrower)
         {
             var bookFind = FindBook(title);
             if (bookFind.TotalCoppies > 0)
@@ -35,57 +34,72 @@ namespace ProgrammingAnalystExercise
                     if (!bookFind.Borrowed.Any(book => book.BorrowedBy?.Equals(borrower) ?? false))
                     {
                         book.Borrow(borrower);
+                        return (book, BorrowBookResult.Success);
                     }
                     else
                     {
                         Console.WriteLine($"Customer {borrower} already has borrowed a copy of the book {title}");
+                        return (null, BorrowBookResult.CustomerAlreadyBorrowed);
                     }
                 }
                 else
                 {
                     Console.WriteLine($"All coppies of '{title}' are currently checked out");
+                    return (null, BorrowBookResult.NoCopiesAvailible);
                 }
             }
             else
             {
                 Console.WriteLine($"The book '{title}' was not found in the library.");
+                return (null, BorrowBookResult.BookNotFound);
             }
         }
 
-        public void ReturnBook(Book book) => ReturnBook(book.Id);
-        public void ReturnBook(int bookId)
+        /// <returns>True if successful or false otherwise</returns>
+        public bool ReturnBook(Book book) => ReturnBook(book.Id);
+        /// <returns>True if successful or false otherwise</returns>
+        public bool ReturnBook(int bookId)
         {
             var book = books.FirstOrDefault(book => book.Id == bookId);
             if (book != null)
             {
                 book.Return();
+                return true;
             }
             else
             {
                 Console.WriteLine($"The book of ID '{bookId}' was not found in the library.");
+                return false;
             }
         }
 
-        public void RemoveBook(Book book) => RemoveBook(book.Id);
-        public void RemoveBook(int bookId)
+        /// <returns>True if successful or false otherwise</returns>
+        public bool RemoveBook(Book book) => RemoveBook(book.Id);
+        /// <returns>True if successful or false otherwise</returns>
+        public bool RemoveBook(int bookId)
         {
             var book = books.FirstOrDefault(book => book.Id == bookId);
             if (book != null)
             {
                 books.Remove(book);
                 Console.WriteLine($"The book of ID '{book.Id}' of title '{book.Title}' has been removed from the library.");
+                return true;
             }
             else
             {
                 Console.WriteLine($"The book of ID '{bookId}' was not found in the library.");
+                return false;
             }
         }
 
-        public Book GetBook(int id) => books.First(book => book.Id == id);
+        public Book? GetBook(int id) => books.FirstOrDefault(book => book.Id == id);
 
-        public FindResult FindBook(string title)
+
+        public FindResult FindBook(string? title = null)
         {
-            var booksWithTitle = books.Where(book => book.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+            var booksWithTitle = !string.IsNullOrWhiteSpace(title)
+                ? books.Where(book => book.Title.Equals(title, StringComparison.OrdinalIgnoreCase))
+                : books;
 
             return new FindResult
             {
@@ -102,25 +116,30 @@ namespace ProgrammingAnalystExercise
             return card;
         }
 
-        public Card GetCard(int id) => cards.First(card => card.Id == id);
+        public Card? GetCard(int id) => cards.FirstOrDefault(card => card.Id == id);
 
-        public void RemoveCard(Card card) => RemoveCard(card.Id);
-        public void RemoveCard(int id)
+        /// <returns>True if successful or false otherwise</returns>
+        public bool RemoveCard(Card card) => RemoveCard(card.Id);
+        public bool RemoveCard(int id)
         {
             var card = cards.FirstOrDefault(card => card.Id == id);
             if (card != null)
             {
                 cards.Remove(card);
                 Console.WriteLine($"The card of ID '{card.Id}' belonging to '{card.Holder}' has been removed from the library.");
+                return true;
             }
             else
             {
                 Console.WriteLine($"The book of ID '{id}' has not been issued by the library.");
+                return false;
             }
         }
 
         // There's no method to find by name since library card holder could have the same name
+        public Book[] FindBooksBorrowedBy(Card card) => FindBooksBorrowedBy(card.Id);
         public Book[] FindBooksBorrowedBy(int cardId) => books.Where(book => book.BorrowedBy?.Id == cardId).ToArray();
+
         public string[] GetCatalogue(bool onlyAvailible = false)
         {
             var titles = new List<string>();
