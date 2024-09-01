@@ -3,37 +3,47 @@
     public class Book
     {
         public string Title { get; private set; }
-        public bool IsBorrowed { get; private set; }
+        public Card? BorrowedBy { get; private set; } = null;
+        public int Id { get; private set; }
 
-        public Book(string title)
+        public Book(int id, string title)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(id);
+            if (string.IsNullOrWhiteSpace(title)) throw new ArgumentNullException(nameof(title), "The book title can't be null or empty");
             Title = title;
-            IsBorrowed = false;
+            Id = id;
         }
 
-        public void Borrow()
+        /// <returns>True if successful or false otherwise</returns>
+        public bool Borrow(Card borrowerCard) 
         {
-            if (!IsBorrowed)
+            ArgumentNullException.ThrowIfNull(borrowerCard);
+            if (BorrowedBy == null)
             {
-                IsBorrowed = true;
-                Console.WriteLine($"The book '{Title}' has been checked out.");
+                BorrowedBy = borrowerCard;
+                Console.WriteLine($"The book '{Title}' of ID '{Id}' has been checked out by {BorrowedBy}.");
+                return true;
             }
             else
             {
-                Console.WriteLine($"The book '{Title}' is already checked out.");
+                Console.WriteLine($"The book '{Title}' of ID '{Id}' is currently checked out by {BorrowedBy}.");
+                return false;
             }
         }
 
-        public void Return()
+        /// <returns>True if successful or false otherwise</returns>
+        public bool Return()
         {
-            if (IsBorrowed)
+            if (BorrowedBy != null)
             {
-                IsBorrowed = false;
-                Console.WriteLine($"The book '{Title}' has been returned.");
+                BorrowedBy = null;
+                Console.WriteLine($"The book '{Title}' of ID '{Id}' has been returned.");
+                return true;
             }
             else
             {
-                Console.WriteLine($"The book '{Title}' was not borrowed.");
+                Console.WriteLine($"The book '{Title}' of ID '{Id}' is not borrowed.");
+                return false;
             }
         }
     }
