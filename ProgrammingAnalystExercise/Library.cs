@@ -6,23 +6,42 @@
 
         public Library()
         {
-            books.Add(new Book("The Great Gatsby"));
-            books.Add(new Book("1984"));
-            books.Add(new Book("To Kill a Mockingbird"));
+            books.Add(new Book("The Great Gatsby", books.Count));
+            books.Add(new Book("1984", books.Count));
+            books.Add(new Book("To Kill a Mockingbird", books.Count));
         }
 
-        public void AddBook(Book book)
+        public Book AddBook(string title)
         {
+            if (string.IsNullOrEmpty(title)) throw new ArgumentNullException("Book title can't be null or empty");
+            var book = new Book(title, books.Max(book => book.Id) + 1);
             books.Add(book);
             Console.WriteLine($"The book {book.Title} has been added to the Library");
+            return book;
         }
 
         public void BorrowBook(string title, string borrower)
         {
-            var book = FindBook(title);
-            if (book != null)
+            var bookFind = FindBook(title);
+            if (bookFind.TotalCoppies > 0)
             {
-                book.Borrow(borrower);
+                if (bookFind.Availible.Length > 0)
+                {
+                    var book = bookFind.Availible.First();
+                    // Check to see if borrower already has another copy of this book
+                    if (!bookFind.Borrowed.Any(book => book.BorrowedBy?.Equals(borrower, StringComparison.OrdinalIgnoreCase) ?? false))
+                    {
+                        book.Borrow(borrower);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Customer {borrower} already has borrowed a copy of the book {title}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"All coppies of '{title}' are currently checked out");
+                }
             }
             else
             {
@@ -30,43 +49,44 @@
             }
         }
 
-        public void ReturnBook(string title)
+        public void ReturnBook(Book book) => ReturnBook(book.Id);
+        public void ReturnBook(int bookId)
         {
-            var book = FindBook(title);
+            var book = books.FirstOrDefault(book => book.Id == bookId);
             if (book != null)
             {
                 book.Return();
             }
             else
             {
-                Console.WriteLine($"The book '{title}' was not found in the library.");
+                Console.WriteLine($"The book of ID '{bookId}' was not found in the library.");
             }
         }
 
-        public void RemoveBook(string title)
+        public void RemoveBook(Book book) => RemoveBook(book.Id);
+        public void RemoveBook(int bookId)
         {
-            var book = FindBook(title);
+            var book = books.FirstOrDefault(book => book.Id == bookId);
             if (book != null)
             {
                 books.Remove(book);
-                Console.WriteLine($"The book '{title}' has been removed from the library.");
+                Console.WriteLine($"The book of ID '{book.Id}' of title '{book.Title}' has been removed from the library.");
             }
             else
             {
-                Console.WriteLine($"The book '{title}' was not found in the library.");
+                Console.WriteLine($"The book of ID '{bookId}' was not found in the library.");
             }
         }
 
-        private Book? FindBook(string title)
+        public FindResult FindBook(string title)
         {
-            foreach (var book in books)
+            var booksWithTitle = books.Where(book => book.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+
+            return new FindResult
             {
-                if (book.Title == title)
-                {
-                    return book;
-                }
-            }
-            return new Book(title);
+                Borrowed = booksWithTitle.Where(book => book.BorrowedBy != null).ToArray(),
+                Availible = booksWithTitle.Where(book => book.BorrowedBy == null).ToArray()
+            };
         }
     }
 }

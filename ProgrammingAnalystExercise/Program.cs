@@ -15,12 +15,16 @@
         {
             var library = new Library();
             
-            var newBook = new Book("Great Expectations");
-            
-            library.AddBook(newBook);
+            var book = library.AddBook("Great Expectations");
+            library.AddBook("gReAt eXpEcTaTiOnS"); 
+
             library.BorrowBook("Great Expectations", "Ploni");
-            library.ReturnBook("Great Expectations");
-            library.RemoveBook("Great Expectations");
+            library.BorrowBook("Great Expectations", "Ploni");
+            library.BorrowBook("Great Expectations", "Agmoni");
+            library.BorrowBook("Great Expectations", "Agmoni");
+            library.ReturnBook(book.Id);
+
+            library.RemoveBook(book);
         }
     }
 }
