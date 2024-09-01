@@ -2,7 +2,7 @@
 
 Thank you for showing interest in one of our Programming Analyst positions! As part of our interview process, we would like to ask you to complete the following assignment.
 
-The solution in this repository mimics a simple library that contains a collection of books and has methods for adding, borrowing, returning, and returning books to and from the library.
+The solution in this repository mimics a simple library that contains a collection of books and has methods for adding, borrowing, returning, and finding removing books to and from the library.
 
 How would you improve this project to make it ready for an enterprise/production setting including debugging any errors you might find?
 

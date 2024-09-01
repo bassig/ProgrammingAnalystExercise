@@ -17,12 +17,12 @@
             Console.WriteLine($"The book {book.Title} has been added to the Library");
         }
 
-        public void BorrowBook(string title)
+        public void BorrowBook(string title, string borrower)
         {
             var book = FindBook(title);
             if (book != null)
             {
-                book.Borrow();
+                book.Borrow(borrower);
             }
             else
             {

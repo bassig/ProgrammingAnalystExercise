@@ -18,7 +18,7 @@
             var newBook = new Book("Great Expectations");
             
             library.AddBook(newBook);
-            library.BorrowBook("Great Expectations");
+            library.BorrowBook("Great Expectations", "Ploni");
             library.ReturnBook("Great Expectations");
             library.RemoveBook("Great Expectations");
         }

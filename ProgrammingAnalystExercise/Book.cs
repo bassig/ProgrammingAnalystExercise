@@ -3,32 +3,32 @@
     public class Book
     {
         public string Title { get; private set; }
-        public bool IsBorrowed { get; private set; }
+        public string? BorrowedBy { get; private set; } = null;
 
         public Book(string title)
         {
+            if (string.IsNullOrEmpty(title)) throw new NullReferenceException("The book must have a title");
             Title = title;
-            IsBorrowed = false;
         }
 
-        public void Borrow()
+        public void Borrow(string borrower) // TODO library card system
         {
-            if (!IsBorrowed)
+            if (BorrowedBy == null)
             {
-                IsBorrowed = true;
-                Console.WriteLine($"The book '{Title}' has been checked out.");
+                BorrowedBy = borrower;
+                Console.WriteLine($"The book '{Title}' has been checked out by {BorrowedBy}.");
             }
             else
             {
-                Console.WriteLine($"The book '{Title}' is already checked out.");
+                Console.WriteLine($"The book '{Title}' is currently checked out by {BorrowedBy}.");
             }
         }
 
         public void Return()
         {
-            if (IsBorrowed)
+            if (BorrowedBy != null)
             {
-                IsBorrowed = false;
+                BorrowedBy = null;
                 Console.WriteLine($"The book '{Title}' has been returned.");
             }
             else
